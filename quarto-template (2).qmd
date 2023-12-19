@@ -1,0 +1,286 @@
+---
+title: "DANL 200: Introduction to Data Analytics<br>Project"
+subtitle: "Quarto Template<br><br>" 
+author: "Angelina Batista"
+  - name: "Angelina Batista"
+    affiliations:
+      - name: SUNY Geneseo
+  - name: Name 2
+    affiliations:
+      - name: SUNY Geneseo
+  - <br>
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    number-sections: true
+    code-fold: false       # https://quarto.org/docs/output-formats/html-code.html
+    code-summary: "Show the code"
+    code-tools: true
+    highlight-style: espresso # atom-one tango espresso
+
+execute: 
+  echo: true
+  eval: true
+  warning: false
+  message: false
+  fig-width: 9
+  
+---
+
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(hrbrthemes)
+library(skimr)
+
+```
+
+
+```{r}
+  Sleep_Stats <- read.csv("~/Documents/Angelina_Batista/Sleep_Stats.csv")
+nvars <- format(round(ncol(Sleep_Stats), 0), 
+                nsmall=0, 
+                big.mark=",") 
+nobs <- format(round(nrow(Sleep_Stats), 0), 
+                nsmall=0, 
+                big.mark=",")
+```
+
+- Here is the paged table using `rmarkdown::paged_table()` with the `results = 'asis'` chunk option.
+
+```{r}
+#| results: asis
+#| echo: false
+rmarkdown::paged_table(Sleep_Stats) 
+```
+
+<br>
+
+The number of variables is `r nvars`; the number of observations is `r nobs`.
+
+<br>
+
+**Roses** are <span style="color: red;">red</span>
+
+*violets* are <span style="color: blue;">blue</span>.
+
+
+
+# Introduction
+
+- Why does your project matter?
+
+Our project matters because it shows distrubution between people in different stages of life's physical activity level and how it effects their body. 
+
+- Motivate your project.
+
+
+
+- Summarize the project in the last paragraph.
+
+
+# Data
+
+## Data Summary
+
+- Summary statistics (Use `skimr::skim()`)
+#Summary Statistics
+
+```{r}
+#Summary of Gender count
+Gender_summary <-table(Sleep_Stats$Gender)
+Gender_summary
+
+#Count Occurrences of specific occupations
+Occupation_counts <- table(Sleep_Stats$Occupation)
+Occupation_counts
+
+#Summary statistics for Sleep Duration
+skimr::skim(Sleep_Stats$Sleep.Duration)
+
+#Summary Statistics for Quality of Sleep
+skimr::skim(Sleep_Stats$Quality.of.Sleep)
+
+#Summary Statistics for Physical Activity Level
+skimr::skim(Sleep_Stats$Physical.Activity.Level)
+
+#Summary Statistics for Stress Level
+skimr::skim(Sleep_Stats$Stress.Level)
+
+#Summary of BMI Category
+#Count Occurrences of each category in the BMI Column
+category_counts <-table(Sleep_Stats$BMI.Category)
+category_counts
+
+#Summary of Blood Pressure
+#Categorization and Counts
+table(Sleep_Stats$Blood.Pressure)
+
+#Summary Statistics for Heart Rate
+skimr::skim(Sleep_Stats$Heart.Rate)
+
+#Summary Statistics for Daily Steps
+skimr::skim(Sleep_Stats$Daily.Steps)
+
+#Summary Of Sleep Disorder
+#Count Occurrences of each category in the sleep disorder column
+disorder_counts <- table(Sleep_Stats$Sleep.Disorder)
+disorder_counts
+
+```
+
+
+
+## Data Visualization
+
+```{r}
+#Physical Activity Vs. Sleep Duration
+ggplot(Sleep_Stats, aes(x = Sleep.Duration, y = Physical.Activity.Level, color = Stress.Level)) +
+  geom_point() +
+  labs(title = "Effect of Physical Activity and Sleep Duration on Stress",
+       x = "Sleep Duration",
+       y = "Physical Activity Level",
+       color = "Stress Level") +
+  theme(plot.title = element_text(size = 10))
+
+#
+ggplot(Sleep_Stats, aes(x = Sleep.Duration, y = Quality.of.Sleep, color = Quality.of.Sleep)) +
+  geom_point() +
+  facet_wrap(~ Sleep.Disorder) +
+  labs(title = "Scatter Plot of Sleep Duration vs Quality of Sleep",
+       x = "Sleep Duration",
+       y = "Quality of Sleep",
+       color = "Quality of Sleep") +
+  scale_color_gradient(low = "blue", high = "red") +
+  theme(plot.title = element_text(size = 12))
+
+#
+ ggplot(Sleep_Stats, aes(x = BMI.Category, y = Age, fill = Occupation)) +
+  geom_tile(color = "white") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Heatmap of BMI Category by Age and Occupation",
+       x = "BMI Category",
+       y = "Age",
+       fill = "Occupation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ 
+ #
+Sleep_Stats %>%
+  ggplot(aes(x = `Sleep.Duration`, y = `Quality.of.Sleep`, color = Gender)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() +
+  labs(x = "Sleep Duration", y = "Quality of Sleep")
+
+#-  - - 
+Sleep_Stats %>%
+  ggplot(aes(x = `Physical.Activity.Level`, y = `Heart.Rate`, color = `Gender`)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Relationship Between Heart Rate and Physical Activity Level", x = "Physical.Activity.Level", y = "Heart.Rate", color = "Gender") +
+  theme_minimal()
+# - - - - - - - - - -
+
+ggplot(Sleep_Stats, aes(x = Gender, y = Physical.Activity.Level, fill = Occupation)) +
+  geom_tile(color = "pink") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Distribution between Gender Vs.Physical Activity Level",
+       x = "Gender",
+       y = "Physical Activity Level",
+       fill = "Occupation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+
+```
+
+
+
+## Data Transformation
+
+```{r}
+
+# Interaction plot for sleep duration, quality, gender, occupation, and age group
+ggplot(Sleep_Stats, aes(x = `Sleep.Duration`, y = `Quality.of.Sleep`, color = Gender)) +
+  geom_point() +
+  facet_grid(Occupation ~ Age_Group) +
+  labs(title = "Interaction Plot: Sleep Duration, Quality, Gender, Occupation, and Age Group",
+       x = "Sleep Duration",
+       y = "Quality of Sleep",
+       color = "Gender") +
+  theme_minimal()
+
+
+# Creating age groups
+Sleep_Stats <- Sleep_Stats %>%
+  mutate(Age_Group = case_when(
+    Age < 30 ~ "Under 30",
+    Age >= 30 & Age < 50 ~ "30-50",
+    Age >= 50 ~ "Over 50"
+  ))
+
+
+```
+
+
+```{r}
+#| results: asis
+#| echo: false
+rmarkdown::paged_table(ob_sum1) 
+```
+
+# Example Title {.unnumbered}
+- This is an unnumbered section.
+
+
+
+
+## Analysis
+
+
+## Quotes
+- Quote with `>`
+
+> "The truth is rarely pure and never simple."
+>
+> --- Oscar Wilde
+
+
+
+## Inserting Figures
+For a demonstration of a DANL tiger, see @fig-tiger.
+
+```{r}
+#| echo: false
+#| label: fig-tiger
+#| fig-cap: "DANL Tiger"
+#| fig-width: 1
+
+knitr::include_graphics("https://bcdanl.github.io/img/danl-tiger.gif")
+```
+
+
+
+## Inserting a HTML page
+````{=html}
+<style>iframe{height: 800px; width: 700px}</style>
+<iframe height="100%" width="100%" frameborder="no"
+src="https://bcdanl.shinyapps.io/01_old_faithful/">\]
+[poiuytaQW]
+</iframe>
+```` 
+
+
+<br><br><br><br>
+
+# References
+
+- [https://quarto.org/docs/output-formats/html-basics.html](https://quarto.org/docs/output-formats/html-basics.html)
+
+- [https://quarto.org/docs/websites/](https://quarto.org/docs/websites/)
+
+- [R for Data Science](http://r4ds.hadley.nz) by [Hadley Wickham](https://hadley.nz)

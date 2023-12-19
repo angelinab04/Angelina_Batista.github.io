@@ -1,0 +1,42 @@
+---
+title: "Angelina Batista" 
+about:
+  template: trestles  # jolla  trestles  solana  marquee  broadside
+  image: silly_pic.png
+  image-width: 16em
+  image-shape: round # rectangle  round  rounded
+  
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com
+    - icon: instagram
+      text: Instagram
+      href: https://instagram.com
+    - icon: github
+      text: GitHub
+      href: https://github.com/angelinab04/Angelina_Batista.github.io
+    - icon: file-earmark-pdf
+      text: Resumé
+      href: https://GITHUB_USERNAME.github.io/resume-example.pdf
+    - icon: mailbox
+      text: Email
+      href: mailto:YOUR_EMAIL@geneseo.edu
+
+---
+
+
+Angelina Batista majors in Data Analytics at SUNY Geneseo. When not working on pursuing her degree, Angelina enjoys playing the guitar and crocheting clothes.
+
+## Education
+
+State University of New York at Geneseo | Geneseo, NY <br>
+B.S. in Biology | May 2026 - May 2026 <br>
+Minor in Business Administration 
+
+## Experience
+
+Library Intern | September 2022 - May 2023| <br> 
+Resident Assistant | August 2023 - Ongoing |
+
+
